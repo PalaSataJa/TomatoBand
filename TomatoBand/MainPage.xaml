@@ -25,8 +25,9 @@
 				<TextBox x:Name="LargeBreakBox" Text="20" HorizontalAlignment="Center"></TextBox>
 			</StackPanel>
 		</StackPanel>
-		<Button Content="Start Tomatoes" HorizontalAlignment="Left" Margin="0,220,0,0" VerticalAlignment="Top" Width="215" Click="Button_Click" FontFamily="Global User Interface"/>
-		<TextBlock x:Name="TextBlock" HorizontalAlignment="Left" Margin="0,265,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="549" Width="380"/>
-
+		<Button x:Name="StartButton" Content="Start Tomatoes" HorizontalAlignment="Left" Margin="0,220,0,0" VerticalAlignment="Top" Width="215" Click="StartButton_Click" FontFamily="Global User Interface"/>
+		<TextBlock x:Name="TextBlock" HorizontalAlignment="Left" Margin="0,328,0,-237" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="549" Width="380"/>
+		<TextBlock x:Name="SecondBlock" FontSize="17" Margin="251,240,-251,53">Elapsed</TextBlock>
+		<Button Content="Stop" HorizontalAlignment="Left" Margin="0,264,0,0" x:Name="StopButton"  VerticalAlignment="Top" Width="215" Click="StopButton_Click"  FontFamily="Global User Interface"/>
 	</Grid>
 </Page>

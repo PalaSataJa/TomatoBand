@@ -1,6 +1,5 @@
 ﻿using System;
 using Windows.UI.Xaml;
-using Microsoft.Band;
 
 namespace TomatoBand
 {
@@ -8,36 +7,39 @@ namespace TomatoBand
 	{
 		public delegate void TimerHandler(object sender, TimerEventArgs args);
 
-		private readonly IBandClient _bandClient;
 		private readonly int _breakDuration;
 		private readonly int _largeBreakDuration;
 		private readonly DispatcherTimer _timer;
 		private readonly int _tomatoDuration;
 		private Phase _currentPhase;
 		private int _elapsed;
-		private int _tomatoInAGroup;
+		private int _tomatoCounter;
 
-		public Timer(int tomatoDuration, int breakDuration, int largeBreakDuration, IBandClient bandClient)
+		public Timer(int tomatoDuration, int breakDuration, int largeBreakDuration)
 		{
-			this._tomatoDuration = tomatoDuration;
-			this._breakDuration = breakDuration;
-			this._largeBreakDuration = largeBreakDuration;
-			_bandClient = bandClient;
+			_tomatoDuration = tomatoDuration * 60;
+			_breakDuration = breakDuration * 60;
+			_largeBreakDuration = largeBreakDuration * 60;
 
 			_timer = new DispatcherTimer();
 			_timer.Tick += timer_Tick;
-			_timer.Interval = new TimeSpan(0, 0, 10);
+			_timer.Interval = new TimeSpan(0, 0, 1);
 		}
 
 		public event TimerHandler OnTomatoFinished;
 		public event TimerHandler OnBreakFinished;
 		public event TimerHandler OnGroupComplete;
+		public event TimerHandler OnTick;
 
-		private bool TryCallEvent(TimerHandler eventHandler)
+		private bool TryCallEvent(TimerHandler eventHandler, TimerEventArgs args = null)
 		{
+			if (args == null)
+			{
+				args = new TimerEventArgs();
+			}
 			if (eventHandler != null)
 			{
-				eventHandler(this, new TimerEventArgs {BandClient = _bandClient});
+				eventHandler(this, args);
 				return true;
 			}
 			return false;
@@ -46,17 +48,17 @@ namespace TomatoBand
 		private void timer_Tick(object sender, object e)
 		{
 			_elapsed++;
+			TryCallEvent(OnTick, new TimerEventArgs { Elapsed = _elapsed });
 			switch (_currentPhase)
 			{
 				case Phase.Tomato:
 					if (_elapsed == _tomatoDuration)
 					{
 						_elapsed = 0;
-						_tomatoInAGroup++;
-						if (_tomatoInAGroup == 4)
+						_tomatoCounter++;
+						if (_tomatoCounter % 4==0)
 						{
 							_currentPhase = Phase.LongBreak;
-							;
 						}
 						else
 						{
@@ -86,8 +88,14 @@ namespace TomatoBand
 
 		public void Start()
 		{
+			_tomatoCounter = 0;
 			_currentPhase = Phase.Tomato;
 			_timer.Start();
+		}
+
+		public void Stop()
+		{
+			_timer.Stop();
 		}
 	}
 }

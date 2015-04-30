@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.Band;
 
 namespace TomatoBand
 {
 	public class TimerEventArgs : EventArgs
 	{
-		public IBandClient BandClient { get; set; }
+		public int Elapsed { get; set; }
 	}
 }
